@@ -1,0 +1,2 @@
+Ceci est un simple fichier texte.
+Il sert à démontré qu'il peut être envoyé au client.
