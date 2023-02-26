@@ -48,5 +48,24 @@ serveur ferme la connexio
 
 [Socket Programming in C/C++](https://www.geeksforgeeks.org/socket-programming-cc/)
 
-
 [Sockets - Server & Client - 2020](https://www.bogotobogo.com/cplusplus/sockets_server_client.php)
+
+[Sockets - Server & Client 2 - 2020](https://www.bogotobogo.com/cplusplus/sockets_server_client_2.php)
+
+[Linux Programmer's Manual - bzero](https://man7.org/linux/man-pages/man3/bzero.3.html)
+
+[TCP/IP network byte ordering convention](https://www.ibm.com/docs/en/zos/2.1.0?topic=api-tcpip-network-byte-ordering-convention)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
