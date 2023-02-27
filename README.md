@@ -43,7 +43,9 @@ serveur ferme la connexio
     shutdown to end read/write.
     close to releases data.
 
-
+# Utilisation
+1. Exécuter le serveur : gcc ./server {NuméroDePort}
+2. Exécuter le client : gcc ./server {NomDeLHote} {NuméroDePort}
 ## Références
 
 [Socket Programming in C/C++](https://www.geeksforgeeks.org/socket-programming-cc/)
@@ -58,7 +60,7 @@ serveur ferme la connexio
 
 
 
-
+[other than text file](https://stackoverflow.com/questions/10222423/reading-the-content-of-file-other-than-txt-file)
 
 
 

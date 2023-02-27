@@ -7,14 +7,27 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <iostream>
-#include <arpa/inet.h>
-
+#include <arpa/inet.h> // convertion de big-endian a little-endiaan
 #define USERNAME = Simon
 #define PASSWORD = MotDePasse
 
-#define PORT 8080 //Déclaration de la constante PORT = 8080
-void OuvertureDeFichier(){
+void EnvoieDeFichier(FILE *fp, int socket_fileDescriptor){
+    int SIZE = 0;
+    int n;
 
+    fseek(fp, 0L, SEEK_END);
+    SIZE = ftell(fp);
+    std::cout << "Taille du fichier: " << SIZE << std::endl;
+
+    char data[SIZE];
+
+    while(fgets(data, SIZE, fp) != NULL) {
+        if (send(socket_fileDescriptor, data, sizeof(data), 0) == -1) {
+            perror("[-]Error in sending file.");
+            exit(1);
+        }
+        bzero(data, SIZE);
+    }
 }
 
 void MessageDErreur(const char *msg){
@@ -63,6 +76,7 @@ int main(int argc, char const* argv[]){
     // Toutes les entrées de connexions seront ajouter à la file d'attente
     // Maximum de file d'attente sera de 10 clients
     // listen(socket, nombre_de_clients_en_file_dattente)
+
     listen(socket_fileDescriptor,10);
 
     //accept une connexion
@@ -79,6 +93,19 @@ int main(int argc, char const* argv[]){
         MessageDErreur("ERROR: Erreur lors de la fonction accept()");
     }
     printf("server: got connection from %s port %d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
+
+    //Ouverture du fichier voulu
+    //****************************************************** new shit
+    FILE *fp = fopen("/Users/berlingott/Desktop/TCPfileTransfer/ServerSide/zambla.m4a", "rb");
+    if (fp == NULL) {
+        MessageDErreur("Error: Erreur lors de l'ouverture de fichier");
+        exit(1);
+    }
+
+    EnvoieDeFichier(fp, socket_fileDescriptor);
+    printf("[+]File data sent successfully.\n");
+    //****************************************************** new shit
+
 
     //send() pour envoyer une string de x bytes avec le protocol par default 0 au socket sauvegardé
     //send(socket,string,x,0)
