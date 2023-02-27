@@ -3,4 +3,4 @@ project(ServerSide)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ServerSide main.cpp MessageDErreur.h)
+add_executable(ServerSide main.cpp MessageDErreur.h SequenceDIdentification.h)

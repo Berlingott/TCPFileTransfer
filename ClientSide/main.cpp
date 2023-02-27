@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -7,45 +8,17 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <string>
-#include "MessageDErreur.h"
 #include "TelechargementDuFichier.h"
-
-void checkforerror(int nlecture, const char *msg){
-    if (nlecture < 0) {
-        MessageDErreur(msg);
-    }
-}
+#include "SequenceDIdentification.h"
 
 void SequenceDeCommunication(char buffer[256], int socket_fileDescriptor){
-    int nlecture;
-    //Réception de connexion + nous devons recevoir une demande de pseudeo
-    bzero(buffer,255);
-    nlecture = read(socket_fileDescriptor, buffer, 255);
-    checkforerror(nlecture,"ERROR:  erreur lors de la lecture du serveur ");
-    printf("%s\n", buffer);
-
-    // envoie de pseudo
-    bzero(buffer,255);
-    fgets(buffer,255,stdin);
-    nlecture = write(socket_fileDescriptor, buffer, strlen(buffer));
-
-    //lecture de réponse de l'envoie du pseudo ( cela devrait demander le mot de passe)
-    bzero(buffer,255);
-    nlecture = read(socket_fileDescriptor, buffer,255);
-    printf("%s\n", buffer);
-
-    //envoie de mot de passe
-    bzero(buffer,255);
-    fgets(buffer,255,stdin);
-    nlecture = write(socket_fileDescriptor, buffer, strlen(buffer));
-
-    //lecture de réponse de l'envoie du mdp ( cela devrait dire que nous avons accès au fichier)
-    bzero(buffer,255);
-    nlecture = read(socket_fileDescriptor, buffer,255);
-    checkforerror(nlecture,"ERROR: erreur lors de la lecture du serveur ");
-    printf("%s\n", buffer);
+    int nlecture = 0;
+    if(SequenceDIdentification(socket_fileDescriptor, nlecture, buffer)){
+        //sequence de proposition des fichiers
 
 
+        // fin de séquence des fichiers
+    }
 }
 int main(int argc, char *argv[]){
     int socket_fileDescriptor, portNumber, nlecture, nouveau_sock;

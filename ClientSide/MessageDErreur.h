@@ -16,8 +16,6 @@
 
 #endif CLIENTSIDE_MESSAGEDERREUR_H
 
-
-
 void MessageDErreur(const char *msg){
     perror(msg); // interprétation du message d'erreur dans la console
     exit(1); // interruption du programme

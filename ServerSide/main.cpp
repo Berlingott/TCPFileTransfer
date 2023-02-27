@@ -9,37 +9,12 @@
 #include <iostream>
 #include <arpa/inet.h> // convertion de big-endian a little-endiaan
 #include "MessageDErreur.h"
-
+#include "SequenceDIdentification.h"
 //Hardcoded Identified
 const std::string user = "simon\n";
 const std::string mdp = "mdp\n";
 
-bool SequenceDIdentification(int new_socket_fileDescriptor, int nlecture,  char buffer[256]){
-    nlecture = read(new_socket_fileDescriptor,buffer,255);
-    if (nlecture < 0) MessageDErreur("ERROR reading from socket");
-    printf("pseudo: ",buffer);
 
-    if (buffer == user){// pseudo reconnu
-        bzero(buffer,255); //efface le buffer ( réponse précédente)
-        send(new_socket_fileDescriptor,"Pseudo reconnu. Quel est votre mot de passe?",100,0);
-        nlecture = read(new_socket_fileDescriptor,buffer,255);
-        printf("mdp: ",buffer);
-
-        if(buffer == mdp){
-            bzero(buffer,255); //efface le buffer ( réponse précédente)
-            send(new_socket_fileDescriptor,"Mot de passe reconnu. Voici la liste des fichier disponible:",100,0);
-            return true;
-        }else{
-            bzero(buffer,255); //efface le buffer ( réponse précédente)
-            send(new_socket_fileDescriptor,"Mot de passe non-reconnu. Vous allez être déconnecté.",100,0);
-            return false;
-        }
-    } else{//pseudo non reconnu
-        bzero(buffer,255); //efface le buffer ( réponse précédente)
-        send(new_socket_fileDescriptor,"Pseudo non-reconnu. Vous allez être déconnecté.",100,0);
-        return false;
-    }
-}
 
 void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char buffer[256]){
     //send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",100,0);
@@ -49,7 +24,7 @@ void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char 
 
     send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",100,0);
 
-    if(SequenceDIdentification(new_socket_fileDescriptor, nlecture, buffer)){ // les identifiants sont bon, les fichiers peuvent être donné
+    if(SequenceDIdentification(new_socket_fileDescriptor, nlecture, buffer, user, mdp)){ // les identifiants sont bon, les fichiers peuvent être donné
         //todo envoyer le nombre de fichiers disponible
         //todo faire une boucle pour ce nombre de fichicers diponible
         //todo envoyé ce fichier
