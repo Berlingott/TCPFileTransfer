@@ -1,3 +1,4 @@
+#define _BSD_SOURCE
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -6,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <iostream>
+#include <arpa/inet.h>
 
 #define USERNAME = Simon
 #define PASSWORD = MotDePasse
@@ -22,6 +24,7 @@ void MessageDErreur(const char *msg){
 
 int main(int argc, char const* argv[]){
     int socket_fileDescriptor, new_socket_fileDescriptor, portNumber;
+    int nlecture;
     socklen_t clientlenght;
     char buffer[256]; //buffer pour le client
     struct sockaddr_in server_address, client_address;  // initialization de deux structure
@@ -62,11 +65,36 @@ int main(int argc, char const* argv[]){
     // listen(socket, nombre_de_clients_en_file_dattente)
     listen(socket_fileDescriptor,10);
 
+    //accept une connexion
+    clientlenght = sizeof (client_address);
+    //Acceptons la connexion
+    // la fonction accept() sauvegardera les information du client (adress) dans la structure
+    // new_socket_fileDescriptor et la longueur dans clientlenght
+    //Le socket d'origine pourra retourner à accepter des connexion comme celle-ci se retrouve dans
+    // une autre stucture
 
+    new_socket_fileDescriptor = accept(socket_fileDescriptor, (struct sockaddr *) &client_address, &clientlenght);
 
+    if (new_socket_fileDescriptor < 0){
+        MessageDErreur("ERROR: Erreur lors de la fonction accept()");
+    }
+    printf("server: got connection from %s port %d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
 
+    //send() pour envoyer une string de x bytes avec le protocol par default 0 au socket sauvegardé
+    //send(socket,string,x,0)
+    send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",40,0);
 
+    //efface le buffer
+    bzero(buffer,256);
 
+    nlecture = read(new_socket_fileDescriptor,buffer,255);
+    if (nlecture < 0) MessageDErreur("ERROR reading from socket");
+    printf("Here is the message: %s\n",buffer);
+
+    //Fermeture de tous les sockets
+    close(new_socket_fileDescriptor);
+    close(socket_fileDescriptor);
+    return 0;
 }
 
 
