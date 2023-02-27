@@ -13,13 +13,33 @@
 
 void SequenceDeCommunication(char buffer[256], int socket_fileDescriptor){
     int nlecture = 0;
-    if(SequenceDIdentification(socket_fileDescriptor, nlecture, buffer)){
-        //sequence de proposition des fichiers
+    if(SequenceDIdentification(socket_fileDescriptor, nlecture, buffer)){//Si la sequence dIdentification est réussi, procédos au fichier
 
+        std::string stopcode = "Code:ECHO-NOVEMBER-DELTA";
+        char stopcodechar[256];
+        strcpy(stopcodechar, stopcode.c_str());
 
-        // fin de séquence des fichiers
+        do{
+            //sequence de proposition des fichiers
+            bzero(buffer, 255);
+            nlecture = read(socket_fileDescriptor, buffer, 255);
+            checkforerror(nlecture, "ERROR: erreur lors de l'envoie d'un nom de fichier ");
+           if (strcmp(buffer,stopcodechar) != 0 ){ printf("%s\n", buffer);}
+            // fin de séquence des fichiers
+        }
+        while(strcmp(buffer,stopcodechar) != 0 );
+        //demande du nom de fichier
+        bzero(buffer, 255);
+        nlecture = read(socket_fileDescriptor, buffer, 255);
+        checkforerror(nlecture, "ERROR:erreur lors de la demande d'un fichier ");
+
     }
 }
+
+
+
+
+
 int main(int argc, char *argv[]){
     int socket_fileDescriptor, portNumber, nlecture, nouveau_sock;
     socklen_t nouvelle_adresse_size;

@@ -17,6 +17,8 @@
 
 
 bool SequenceDIdentification(int new_socket_fileDescriptor, int nlecture,  char buffer[256], std::string user,std::string mdp){
+    bzero(buffer,255);
+    send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",100,0);
     nlecture = read(new_socket_fileDescriptor,buffer,255);
     if (nlecture < 0) MessageDErreur("ERROR reading from socket");
     printf("pseudo: ",buffer);
