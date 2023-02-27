@@ -15,7 +15,7 @@ void MessageDErreur(const char *msg){
 void TelechargementDuFichier(int socket_fileDescriptor, int SIZE){
     int n;
     FILE *fp;
-    char *filename = "zambla.m4a";
+    char *filename = "sample.txt";
     char buffer[SIZE];
     fp = fopen(filename, "w");
     while (1) {
@@ -59,24 +59,31 @@ int main(int argc, char *argv[]){
     if (connect(socket_fileDescriptor, (struct sockaddr *) &server_address, sizeof(server_address)) < 0){
         MessageDErreur("ERROR: erreur de connexion");
     }
+    /*
     //***********************essait
     nouvelle_adresse_size = sizeof(nouvelle_adresse);
     nouveau_sock = accept(socket_fileDescriptor, (struct sockaddr*)&nouvelle_adresse, &nouvelle_adresse_size);
-    TelechargementDuFichier(nouveau_sock,12950111);
+    TelechargementDuFichier(nouveau_sock,91);
     //***********************essait
-
+    */
+    /*
+    // envoie du message
     printf("Quel est le fichier que vous voullez télécharger ? (ex:1): ");
     bzero(buffer,256);
     fgets(buffer,255,stdin);
     nlecture = write(socket_fileDescriptor, buffer, strlen(buffer));
+    */
+    nlecture = write(socket_fileDescriptor, buffer, strlen(buffer));
 
-    if (nlecture < 0)
+    if (nlecture < 0) {
         MessageDErreur("ERROR: Erreur lors de l'envoie au serveur");
+    }
     bzero(buffer,256);
     nlecture = read(socket_fileDescriptor, buffer, 255);
 
-    if (nlecture < 0)
+    if (nlecture < 0) {
         MessageDErreur("ERROR: erreur lors de la lecture du serveur ");
+    }
 
     printf("%s\n", buffer);
     close(socket_fileDescriptor);
