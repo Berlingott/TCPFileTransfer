@@ -14,22 +14,46 @@
 const std::string user = "simon\n";
 const std::string mdp = "mdp\n";
 
-void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char buffer[32767]){
-    send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",40,0);
+bool SequenceDIdentification(int new_socket_fileDescriptor, int nlecture,  char buffer[256]){
+    nlecture = read(new_socket_fileDescriptor,buffer,255);
+    if (nlecture < 0) MessageDErreur("ERROR reading from socket");
+    printf("pseudo: ",buffer);
+
+    if (buffer == user){// pseudo reconnu
+        bzero(buffer,255); //efface le buffer ( réponse précédente)
+        send(new_socket_fileDescriptor,"Pseudo reconnu. Quel est votre mot de passe?",100,0);
+        nlecture = read(new_socket_fileDescriptor,buffer,255);
+        printf("mdp: ",buffer);
+
+        if(buffer == mdp){
+            bzero(buffer,255); //efface le buffer ( réponse précédente)
+            send(new_socket_fileDescriptor,"Mot de passe reconnu. Voici la liste des fichier disponible:",100,0);
+            return true;
+        }else{
+            bzero(buffer,255); //efface le buffer ( réponse précédente)
+            send(new_socket_fileDescriptor,"Mot de passe non-reconnu. Vous allez être déconnecté.",100,0);
+            return false;
+        }
+    } else{//pseudo non reconnu
+        bzero(buffer,255); //efface le buffer ( réponse précédente)
+        send(new_socket_fileDescriptor,"Pseudo non-reconnu. Vous allez être déconnecté.",100,0);
+        return false;
+    }
+}
+
+void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char buffer[256]){
+    //send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",100,0);
 
     //efface le buffer
-    bzero(buffer,sizeof(buffer));
+    bzero(buffer,255);
 
     send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",100,0);
 
-    nlecture = read(new_socket_fileDescriptor,buffer,sizeof(buffer));
-    if (nlecture < 0) MessageDErreur("ERROR reading from socket");
-    printf("pseudo: %s\n",buffer);
+    if(SequenceDIdentification(new_socket_fileDescriptor, nlecture, buffer)){ // les identifiants sont bon, les fichiers peuvent être donné
+        //todo envoyer le nombre de fichiers disponible
+        //todo faire une boucle pour ce nombre de fichicers diponible
+        //todo envoyé ce fichier
 
-    if (buffer == user){
-        std::cout << "J'ai bien compris";
-    } else{
-        std::cout << "J'ai PAS compris";
     }
 
 }
@@ -56,7 +80,7 @@ int main(int argc, char const* argv[]){
     int socket_fileDescriptor, new_socket_fileDescriptor, portNumber;
     int nlecture;
     socklen_t clientlenght;
-    char buffer[32767]; //buffer pour le client
+    char buffer[256]; //buffer pour le client
     struct sockaddr_in server_address, client_address;  // initialization de deux structure
                                                         // structure sockaddre_in pour les adress server_address et client_address
     if (argc < 2){

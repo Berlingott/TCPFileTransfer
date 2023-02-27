@@ -6,16 +6,54 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <string>
 #include "MessageDErreur.h"
 #include "TelechargementDuFichier.h"
 
+void checkforerror(int nlecture, const char *msg){
+    if (nlecture < 0) {
+        MessageDErreur(msg);
+    }
+}
+
+void SequenceDeCommunication(char buffer[256], int socket_fileDescriptor){
+    int nlecture;
+    //Réception de connexion + nous devons recevoir une demande de pseudeo
+    bzero(buffer,255);
+    nlecture = read(socket_fileDescriptor, buffer, 255);
+    checkforerror(nlecture,"ERROR:  erreur lors de la lecture du serveur ");
+    printf("%s\n", buffer);
+
+    // envoie de pseudo
+    bzero(buffer,255);
+    fgets(buffer,255,stdin);
+    nlecture = write(socket_fileDescriptor, buffer, strlen(buffer));
+
+    //lecture de réponse de l'envoie du pseudo ( cela devrait demander le mot de passe)
+    bzero(buffer,255);
+    nlecture = read(socket_fileDescriptor, buffer,255);
+    printf("%s\n", buffer);
+
+    //envoie de mot de passe
+    bzero(buffer,255);
+    fgets(buffer,255,stdin);
+    nlecture = write(socket_fileDescriptor, buffer, strlen(buffer));
+
+    //lecture de réponse de l'envoie du mdp ( cela devrait dire que nous avons accès au fichier)
+    bzero(buffer,255);
+    nlecture = read(socket_fileDescriptor, buffer,255);
+    checkforerror(nlecture,"ERROR: erreur lors de la lecture du serveur ");
+    printf("%s\n", buffer);
+
+
+}
 int main(int argc, char *argv[]){
     int socket_fileDescriptor, portNumber, nlecture, nouveau_sock;
     socklen_t nouvelle_adresse_size;
     struct sockaddr_in server_address, nouvelle_adresse;
     struct hostent *server;
 
-    char buffer[32767];
+    char buffer[256];
     if (argc < 3){
         fprintf(stderr,"usage %s hostname port\n", argv[0]);
         exit(0);
@@ -47,26 +85,8 @@ int main(int argc, char *argv[]){
     ***********************essait
     */
 
-    // envoie du message
+    SequenceDeCommunication(buffer, socket_fileDescriptor);
 
-    printf("Quel est le fichier que vous voullez télécharger ? (ex:1): ");
-    bzero(buffer,256);
-    fgets(buffer,255,stdin);
-
-    //lecture
-    nlecture = write(socket_fileDescriptor, buffer, strlen(buffer));
-
-    if (nlecture < 0) {
-        MessageDErreur("ERROR: Erreur lors de l'envoie au serveur");
-    }
-    bzero(buffer,sizeof(buffer));
-    nlecture = read(socket_fileDescriptor, buffer, sizeof(buffer));
-
-    if (nlecture < 0) {
-        MessageDErreur("ERROR: erreur lors de la lecture du serveur ");
-    }
-
-    printf("%s\n", buffer);
     close(socket_fileDescriptor);
     return 0;
 
