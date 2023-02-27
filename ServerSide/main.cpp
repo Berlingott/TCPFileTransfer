@@ -8,9 +8,31 @@
 #include <netinet/in.h>
 #include <iostream>
 #include <arpa/inet.h> // convertion de big-endian a little-endiaan
-#define USERNAME = Simon
-#define PASSWORD = MotDePasse
+#include "MessageDErreur.h"
 
+//Hardcoded Identified
+const std::string user = "simon\n";
+const std::string mdp = "mdp\n";
+
+void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char buffer[32767]){
+    send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",40,0);
+
+    //efface le buffer
+    bzero(buffer,sizeof(buffer));
+
+    send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",100,0);
+
+    nlecture = read(new_socket_fileDescriptor,buffer,sizeof(buffer));
+    if (nlecture < 0) MessageDErreur("ERROR reading from socket");
+    printf("pseudo: %s\n",buffer);
+
+    if (buffer == user){
+        std::cout << "J'ai bien compris";
+    } else{
+        std::cout << "J'ai PAS compris";
+    }
+
+}
 void EnvoieDeFichier(FILE *fp, int socket_fileDescriptor){
     int SIZE = 0;
     int n;
@@ -19,7 +41,7 @@ void EnvoieDeFichier(FILE *fp, int socket_fileDescriptor){
     SIZE = ftell(fp);
     std::cout << "Taille du fichier: " << SIZE << std::endl;
 
-    char data[SIZE];
+    char data[12950111];
 
     while(fgets(data, SIZE, fp) != NULL) {
         if (send(socket_fileDescriptor, data, sizeof(data), 0) == -1) {
@@ -30,23 +52,17 @@ void EnvoieDeFichier(FILE *fp, int socket_fileDescriptor){
     }
 }
 
-void MessageDErreur(const char *msg){
-    perror(msg); // interprétation du message d'erreur dans la console
-    exit(1); // interruption du programme
-}
-
 int main(int argc, char const* argv[]){
     int socket_fileDescriptor, new_socket_fileDescriptor, portNumber;
     int nlecture;
     socklen_t clientlenght;
-    char buffer[256]; //buffer pour le client
+    char buffer[32767]; //buffer pour le client
     struct sockaddr_in server_address, client_address;  // initialization de deux structure
                                                         // structure sockaddre_in pour les adress server_address et client_address
     if (argc < 2){
         fprintf(stderr, "ERROR: Argument manquant lors du lancement du programme.");
         exit(1);
     }
-
     //Création d'un SOCKET
     //int = socket_fileDescriptor
     //domain = AF_INET      -- domain dans l'IPv4
@@ -110,14 +126,10 @@ int main(int argc, char const* argv[]){
 
     //send() pour envoyer une string de x bytes avec le protocol par default 0 au socket sauvegardé
     //send(socket,string,x,0)
-    send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",40,0);
 
-    //efface le buffer
-    bzero(buffer,256);
+    //Sequence de communication
+    SequenceDeCommunication(new_socket_fileDescriptor, nlecture, buffer);
 
-    nlecture = read(new_socket_fileDescriptor,buffer,255);
-    if (nlecture < 0) MessageDErreur("ERROR reading from socket");
-    printf("Here is the message: %s\n",buffer);
 
     //Fermeture de tous les sockets
     close(new_socket_fileDescriptor);
