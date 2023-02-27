@@ -10,33 +10,14 @@
 #include <string>
 #include "TelechargementDuFichier.h"
 #include "SequenceDIdentification.h"
+#include "SelectionDuFichier.h"
 
 void SequenceDeCommunication(char buffer[256], int socket_fileDescriptor){
     int nlecture = 0;
-    if(SequenceDIdentification(socket_fileDescriptor, nlecture, buffer)){//Si la sequence dIdentification est réussi, procédos au fichier
-
-        std::string stopcode = "Code:ECHO-NOVEMBER-DELTA";
-        char stopcodechar[256];
-        strcpy(stopcodechar, stopcode.c_str());
-
-        do{
-            //sequence de proposition des fichiers
-            bzero(buffer, 255);
-            nlecture = read(socket_fileDescriptor, buffer, 255);
-            checkforerror(nlecture, "ERROR: erreur lors de l'envoie d'un nom de fichier ");
-           if (strcmp(buffer,stopcodechar) != 0 ){ printf("%s\n", buffer);}
-            // fin de séquence des fichiers
-        }
-        while(strcmp(buffer,stopcodechar) != 0 );
-        //demande du nom de fichier
-        bzero(buffer, 255);
-        nlecture = read(socket_fileDescriptor, buffer, 255);
-        checkforerror(nlecture, "ERROR:erreur lors de la demande d'un fichier ");
-
+    if(SequenceDIdentification(socket_fileDescriptor, nlecture, buffer)){
+        SelectionDuFichier(socket_fileDescriptor, nlecture, buffer);
     }
 }
-
-
 
 
 

@@ -21,7 +21,7 @@ bool SequenceDIdentification(int new_socket_fileDescriptor, int nlecture,  char 
     send(new_socket_fileDescriptor,"Bien le bonjour, mais qui êtes vous?",100,0);
     nlecture = read(new_socket_fileDescriptor,buffer,255);
     if (nlecture < 0) MessageDErreur("ERROR reading from socket");
-    printf("pseudo: ",buffer);
+    printf("pseudo: ", buffer);
 
     if (buffer == user){// pseudo reconnu
         bzero(buffer,255); //efface le buffer ( réponse précédente)

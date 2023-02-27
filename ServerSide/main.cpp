@@ -11,6 +11,7 @@
 #include "MessageDErreur.h"
 #include "SequenceDIdentification.h"
 #include <filesystem>
+#include "SelectionDuFichier.h"
 //Hardcoded Identified
 const std::string user = "simon\n";
 const std::string mdp = "mdp\n";
@@ -18,38 +19,10 @@ const std::string mdp = "mdp\n";
 
 void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char buffer[256]){
     if(SequenceDIdentification(new_socket_fileDescriptor, nlecture, buffer, user, mdp)){ // les identifiants sont bon, les fichiers peuvent être donné
-        //todo envoyer le nombre de fichiers disponible
-        //todo faire une boucle pour ce nombre de fichicers diponible
-        //todo envoyé ce fichier
+    std::string cheminfichiervoulu = SelectionDuFichier(new_socket_fileDescriptor, nlecture, buffer);
+
+         //todo envoyé ce fichier
         //lister tous les noms de fichiers disponible dans le dossier Files
-        int nombredefichier;
-
-        std::string availablefiles;
-        std::string path = "/Users/berlingott/Desktop/TCPfileTransfer/ServerSide/Files";
-        std::string stopcode = "Code:ECHO-NOVEMBER-DELTA";
-        //Envoie le nom de tous les fichiers disponibles dans le dossier nommé FILES
-        for (const auto & entry : std::__fs::filesystem::directory_iterator(path)){
-            bzero(buffer,255);
-            availablefiles = entry.path().filename().u8string();
-            strcpy(buffer, availablefiles.c_str());
-            send(new_socket_fileDescriptor, buffer, 255, 0);
-            std::cout << availablefiles;
-        };
-        //envoie de Code:ECHO-NOVEMBER-DELTA signiefie la fin
-        // du cote client, tant que la reception n'est pas "Code:ECHO-NOVEMBER-DELTA"
-        bzero(buffer,255);
-        strcpy(buffer, stopcode.c_str());
-        send(new_socket_fileDescriptor, buffer, 255, 0);
-        std::cout << buffer;
-
-        //Demande du nom de fichier que le client veut
-
-        bzero(buffer,255);
-        strcpy(buffer, stopcode.c_str());
-        send(new_socket_fileDescriptor, buffer, 255, 0);
-        std::cout << buffer;
-
-
 
     }
 }
