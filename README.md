@@ -46,6 +46,12 @@ serveur ferme la connexio
 # Utilisation
 1. Exécuter le serveur : gcc ./server {NuméroDePort}
 2. Exécuter le client : gcc ./server {NomDeLHote} {NuméroDePort}
+
+### Variables d'utilisation
+
+* NuméroDePort - Le numéro de port qu'utiliseront les socket. Ils devrons communiquer sur le même port pour pouvoir établir une connexion.
+* NomDeLHote - le nom de votre ordinateur. Sur windows, vous pouvez ouvrir une invite de commande et taper *hostname* pour trouver le nom de votre machine.
+
 ## Références
 
 [Socket Programming in C/C++](https://www.geeksforgeeks.org/socket-programming-cc/)
