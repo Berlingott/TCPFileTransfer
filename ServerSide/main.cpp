@@ -20,9 +20,31 @@ const std::string mdp = "mdp\n";
 void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char buffer[256]){
     if(SequenceDIdentification(new_socket_fileDescriptor, nlecture, buffer, user, mdp)){ // les identifiants sont bon, les fichiers peuvent être donné
     std::string cheminfichiervoulu = SelectionDuFichier(new_socket_fileDescriptor, nlecture, buffer);
+        // DEBUT TELECHARGEMENT FICHIER
+        // ouverture d'un fichier
+        FILE *fp;
+        const char *filepath = cheminfichiervoulu.c_str();
 
-         //todo envoyé ce fichier
-        //lister tous les noms de fichiers disponible dans le dossier Files
+        fp = fopen(filepath, "rb");
+        if (fp == NULL) {
+            perror("[-]Error in reading file.");
+            exit(1);
+        }
+
+        int nLecteurFichier;
+        char data[255];
+        while(fgets(data, 255, fp) != NULL) {
+            if (send(new_socket_fileDescriptor, data, sizeof(data), 0) == -1) {
+                perror("[-]Error in sending file.");
+                exit(1);
+            }
+            bzero(data, 255);
+        }
+
+
+        //todo envoyé ce fichier
+
+        // FIN TELECHARGEMENT FICHIER
 
     }
 }

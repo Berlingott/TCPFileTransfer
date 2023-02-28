@@ -17,10 +17,11 @@
 
 #endif //CLIENTSIDE_SELECTIONDUFICHIER_H
 
-void SelectionDuFichier(int socket_fileDescriptor, int nlecture,  char buffer[256]){
+std::string SelectionDuFichier(int socket_fileDescriptor, int nlecture,  char buffer[256]){
     //Si la sequence dIdentification est réussi, procédos au fichier
 
     std::string stopcode = "Code:ECHO-NOVEMBER-DELTA";
+    std::string nomDuFichier;
     char stopcodechar[256];
     strcpy(stopcodechar, stopcode.c_str());
 
@@ -45,4 +46,7 @@ void SelectionDuFichier(int socket_fileDescriptor, int nlecture,  char buffer[25
     bzero(buffer,255);
     fgets(buffer,255,stdin);
     write(socket_fileDescriptor, buffer, strlen(buffer));
+    nomDuFichier = buffer;
+    nomDuFichier = nomDuFichier.substr(0, nomDuFichier.size()-1);
+    return nomDuFichier;
 }

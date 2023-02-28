@@ -15,7 +15,28 @@
 void SequenceDeCommunication(char buffer[256], int socket_fileDescriptor){
     int nlecture = 0;
     if(SequenceDIdentification(socket_fileDescriptor, nlecture, buffer)){
-        SelectionDuFichier(socket_fileDescriptor, nlecture, buffer);
+        std::string nomDuFichier = SelectionDuFichier(socket_fileDescriptor, nlecture, buffer);
+        // DEBUT TELECHARGEMENT FICHIER
+
+        int n;
+        FILE *fp;
+        const char *filename = nomDuFichier.c_str();
+        char buffer[255];
+
+        fp = fopen(filename, "w");
+        while (1) {
+            n = recv(socket_fileDescriptor, buffer, 255, 0);
+            if (n <= 0){
+                break;
+                return;
+            }
+            fprintf(fp, "%s", buffer);
+            bzero(buffer, 255);
+        }
+        return;
+
+
+        // FIN TELECHARGEMENT DE FICHIER
     }
 }
 
