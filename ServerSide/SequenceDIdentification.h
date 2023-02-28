@@ -1,7 +1,3 @@
-//
-// Created by Simon Duchesne on 2023-02-27.
-//
-
 #ifndef SERVERSIDE_SEQUENCEDIDENTIFICATION_H
 #define SERVERSIDE_SEQUENCEDIDENTIFICATION_H
 #include <cstdio>

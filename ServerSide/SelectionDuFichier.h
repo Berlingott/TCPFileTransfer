@@ -1,6 +1,3 @@
-//
-// Created by Simon Duchesne on 2023-02-27.
-//
 
 #ifndef SERVERSIDE_SELECTIONDUFICHIER_H
 #define SERVERSIDE_SELECTIONDUFICHIER_H

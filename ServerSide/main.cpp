@@ -24,8 +24,8 @@ void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char 
         // ouverture d'un fichier
         FILE *fp;
         const char *filepath = cheminfichiervoulu.c_str();
-
-        fp = fopen(filepath, "rb");
+        int lenght = 255;
+        fp = fopen(filepath, "rb+");
         if (fp == NULL) {
             perror("[-]Error in reading file.");
             exit(1);
@@ -40,9 +40,6 @@ void SequenceDeCommunication(int new_socket_fileDescriptor, int nlecture,  char 
             }
             bzero(data, 255);
         }
-
-
-        //todo envoyé ce fichier
 
         // FIN TELECHARGEMENT FICHIER
 
@@ -125,20 +122,6 @@ int main(int argc, char const* argv[]){
     }
     printf("server: got connection from %s port %d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
 
-    /*
-    //Ouverture du fichier voulu
-    //****************************Ouverture du fichier ************************** new shit
-    FILE *fp = fopen("/Users/berlingott/Desktop/TCPfileTransfer/ServerSide/sample.txt", "rb");
-    if (fp == NULL) {
-        MessageDErreur("Error: Erreur lors de l'ouverture de fichier");
-        exit(1);
-    }
-
-    EnvoieDeFichier(fp, socket_fileDescriptor);
-    printf("[+]File data sent successfully.\n");
-    //****************************************************** new shit
-    */
-
     //send() pour envoyer une string de x bytes avec le protocol par default 0 au socket sauvegardé
     //send(socket,string,x,0)
 
@@ -151,16 +134,3 @@ int main(int argc, char const* argv[]){
     close(socket_fileDescriptor);
     return 0;
 }
-
-
-// todo transfer username
-// todo transfert de mot de passe
-// todo confirmation d'identifiant
-// todo envoie liste de fichier
-// todo reception de quel fichier
-// todo envoie du fichier
-// todo reprise de connection
-// todo
-// todo
-// todo
-//

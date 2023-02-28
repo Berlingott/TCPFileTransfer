@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <string>
+#include <iostream>
 #include "TelechargementDuFichier.h"
 #include "SequenceDIdentification.h"
 #include "SelectionDuFichier.h"
@@ -17,15 +18,16 @@ void SequenceDeCommunication(char buffer[256], int socket_fileDescriptor){
     if(SequenceDIdentification(socket_fileDescriptor, nlecture, buffer)){
         std::string nomDuFichier = SelectionDuFichier(socket_fileDescriptor, nlecture, buffer);
         // DEBUT TELECHARGEMENT FICHIER
-
+        bzero(buffer, 255);
         int n;
         FILE *fp;
         const char *filename = nomDuFichier.c_str();
         char buffer[255];
 
-        fp = fopen(filename, "w");
+        fp = fopen(filename, "w+b");
         while (1) {
             n = recv(socket_fileDescriptor, buffer, 255, 0);
+            std::cout << buffer;
             if (n <= 0){
                 break;
                 return;
